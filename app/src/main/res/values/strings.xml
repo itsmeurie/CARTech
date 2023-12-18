@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">CARTech</string>
+    <string name="your_cart_is_empty">Your Cart is Empty</string>
+    <string name="my_cart">My Cart</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="delivery">Delivery</string>
+    <string name="total_tax">Total Tax</string>
 
 </resources>
