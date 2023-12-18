@@ -54,8 +54,14 @@ public class LoginActivity extends AppCompatActivity {
         signupRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(intent);
+                // Check for internet connectivity before proceeding to SignupActivity
+                if (isNetworkAvailable()) {
+                    Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                    startActivity(intent);
+                } else {
+                    // Display a toast message when there is no internet connection
+                    Toast.makeText(LoginActivity.this, "No internet connection, please try again later", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

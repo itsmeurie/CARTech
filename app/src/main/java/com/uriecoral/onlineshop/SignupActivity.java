@@ -1,15 +1,20 @@
 package com.uriecoral.onlineshop;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 public class SignupActivity extends AppCompatActivity {
     EditText signupName, signupUsername, signupEmail, signupPassword;
     TextView loginRedirectText;
@@ -27,22 +32,31 @@ public class SignupActivity extends AppCompatActivity {
         signupPassword = findViewById(R.id.signup_password);
         loginRedirectText = findViewById(R.id.loginRedirectText);
         signupButton = findViewById(R.id.signup_button);
+
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                database = FirebaseDatabase.getInstance();
-                reference = database.getReference("users");
-                String name = signupName.getText().toString();
-                String email = signupEmail.getText().toString();
-                String username = signupUsername.getText().toString();
-                String password = signupPassword.getText().toString();
-                HelperClass helperClass = new HelperClass(name, email, username, password);
-                reference.child(username).setValue(helperClass);
-                Toast.makeText(SignupActivity.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                startActivity(intent);
+                // Check for internet connectivity before proceeding to SignupActivity
+                if (isNetworkAvailable()) {
+                    // Proceed to signup
+                    database = FirebaseDatabase.getInstance();
+                    reference = database.getReference("users");
+                    String name = signupName.getText().toString();
+                    String email = signupEmail.getText().toString();
+                    String username = signupUsername.getText().toString();
+                    String password = signupPassword.getText().toString();
+                    HelperClass helperClass = new HelperClass(name, email, username, password);
+                    reference.child(username).setValue(helperClass);
+                    Toast.makeText(SignupActivity.this, "You have signed up successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+                    // Display a toast message when there is no internet connection
+                    Toast.makeText(SignupActivity.this, "No internet connection, please try again later", Toast.LENGTH_LONG).show();
+                }
             }
         });
+
         loginRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,5 +64,15 @@ public class SignupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    // Check if the device has an active internet connection
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 }
